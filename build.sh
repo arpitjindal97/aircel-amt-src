@@ -30,6 +30,8 @@ cp -rf deployments/* aircel_git_bin/
 
 echo "Pushing to aircel_git_bin"
 cd aircel_git_bin
+git config user.name "Arpit Agarwal"
+git config user.email "arpitjindal1997@hotmail.com"
 git add .
 git commit -m "automated build from arpitjindal97/aircel_git_src.git"
 git push origin master
