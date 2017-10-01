@@ -103,6 +103,9 @@ public class amt
             System.out.println("Invalid Format");
             return;
         }
+        
+        System.setProperty("webdriver.chrome.driver", "libs/chromedriver");
+        
         ChromeDriver driver = new ChromeDriver();
         WebDriverWait wait = new WebDriverWait(driver, 60);
         driver.navigate().to("https://" + user + ":" + pass + "@amt.aircel.co.in/AMTIDAM/Default.aspx");
@@ -252,6 +255,7 @@ public class amt
             } catch (Exception e)
             {
                 driver.close();
+                driver.quit();
                 save_file(0);
                 workbook.close();
                 throw e;
@@ -361,8 +365,8 @@ public class amt
             Enumeration<NetworkInterface> enu = NetworkInterface.getNetworkInterfaces();
             Map map = new LinkedHashMap();
             map.put(hostname, ip.getHostAddress());
-            System.out.println("Hostname: " + hostname);
-            System.out.println("HostAddress: " + ip.getHostAddress());
+            //System.out.println("Hostname: " + hostname);
+            //System.out.println("HostAddress: " + ip.getHostAddress());
             while (enu.hasMoreElements())
             {
                 NetworkInterface network = enu.nextElement();
@@ -380,7 +384,7 @@ public class amt
                 {
                     sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
                 }
-                System.out.println(network.getDisplayName() + "\t" + sb.toString());
+                //System.out.println(network.getDisplayName() + "\t" + sb.toString());
                 map.put(network.getDisplayName(), sb.toString());
             }
             URL url;
