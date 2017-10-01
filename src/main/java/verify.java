@@ -58,11 +58,11 @@ public class verify
 			while ((content = br.readLine()) != null)
 			{
 				StringBuilder builder = new StringBuilder(content);
-				builder.delete(0, 5);
-				String file = builder.substring(0, builder.indexOf(")"));
-				builder.delete(0, builder.indexOf("=") + 2);
 
-				server_md5.put(file, builder.toString());
+				String sum = builder.substring(0,builder.indexOf("  "));
+				builder.delete(0, builder.indexOf(" ")+2);
+
+				server_md5.put(builder.toString(),sum);
 				//System.out.println(file);
 			}
 
