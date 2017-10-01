@@ -1,5 +1,5 @@
 language: java
-before_script:
+before_install:
   - env | sort
   - wget --user="$BITBUCKET_EMAIL" --password="$BITBUCKET_PASS" -i urls.txt
   - ls -alh
@@ -8,4 +8,6 @@ before_script:
   - ssh-add git-ssh.key
 script:
   - mvn clean package
-  - bash build.sh
+  - chmod +x build.sh
+  - ls -alh
+  - ./build.sh
