@@ -9,9 +9,18 @@ mv amt.class status.class libs/
 mv WEB-INF/lib/* libs/
 
 echo "Fetching Chromedriver ..."
+
 curl --output chromedriver.zip https://chromedriver.storage.googleapis.com/$(curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_win32.zip
 unzip chromedriver.zip && rm chromedriver.zip
-mv chromedriver.exe libs/chromedriver
+mv chromedriver.exe libs/chromedriver_win
+
+curl --output chromedriver.zip https://chromedriver.storage.googleapis.com/$(curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_mac64.zip
+unzip chromedriver.zip && rm chromedriver.zip
+mv chromedriver libs/chromedriver_mac
+
+curl --output chromedriver.zip https://chromedriver.storage.googleapis.com/$(curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
+unzip chromedriver.zip && rm chromedriver.zip
+mv chromedriver libs/chromedriver_linux
 
 rm -rf WEB-INF META-INF aircel_git_src-1.0.war
 
@@ -27,16 +36,18 @@ git clone git@github.com:arpitjindal97/aircel_git_bin.git
 
 rm -rf aircel_git_bin/*
 cp -rf deployments/* aircel_git_bin/
+rm -rf deployments
+
+ls -alh
 
 echo "Pushing to aircel_git_bin"
 cd aircel_git_bin
 git config user.name "Arpit Agarwal"
 git config user.email "arpitjindal1997@hotmail.com"
 git add .
-git commit -m "automated build from arpitjindal97/aircel_git_src.git"
+git commit -m "chromedriver for every platform"
 git push origin master
 cd ..
 
-rm -rf deployments
 echo "Done"
 exit 0

@@ -33,189 +33,172 @@ import java.util.Scanner;
 Aircel AMT
 */
 
-public class verify
-{
+public class verify {
 
-	public static void main(String[] args) throws Exception
-	{
-		
-		if (!authenticate().equals("OK"))
-        {
+    public static void main(String[] args) throws Exception {
+        String OS = System.getProperty("os.name");
+        if (!authenticate().equals("OK")) {
             return;
         }
 
-		Map<String, String> server_md5 = new LinkedHashMap();
-		try
-		{
-			System.out.println("Checking for updates...");
-			URLConnection connection = new URL(
-					"https://github.com/arpitjindal97/aircel_git_bin/blob/master/md5.md?raw=true").openConnection();
-			Scanner scanner = new Scanner(connection.getInputStream());
-			scanner.useDelimiter("\\Z");
-			String content = scanner.next();
+        Map<String, String> server_md5 = new LinkedHashMap();
+        try {
+            System.out.println("Checking for updates...");
+            URLConnection connection = new URL(
+                    "https://github.com/arpitjindal97/aircel_git_bin/blob/master/md5.md?raw=true").openConnection();
+            Scanner scanner = new Scanner(connection.getInputStream());
+            scanner.useDelimiter("\\Z");
+            String content = scanner.next();
 
-			BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content.getBytes())));
-			while ((content = br.readLine()) != null)
-			{
-				StringBuilder builder = new StringBuilder(content);
+            BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content.getBytes())));
+            while ((content = br.readLine()) != null) {
+                StringBuilder builder = new StringBuilder(content);
 
-				String sum = builder.substring(0,builder.indexOf("  "));
-				builder.delete(0, builder.indexOf(" ")+2);
+                String sum = builder.substring(0, builder.indexOf("  "));
+                builder.delete(0, builder.indexOf(" ") + 2);
 
-				server_md5.put(builder.toString(),sum);
-				//System.out.println(file);
-			}
+                server_md5.put(builder.toString(), sum);
+                //System.out.println(file);
+            }
 
-		} catch (Exception ex)
-		{
+        } catch (Exception ex) {
 
-		}
-		
-		File f = new File("libs/");
-		f.mkdir();
-		String[] path = f.list();
-		if(path != null)
-		for (int i = 0; i < path.length; i++)
-		{
-			String ff = path[i];
-			File tt = new File("libs/" + ff);
-			if (tt.isDirectory())
-			{
-				continue;
-			}
-			String digest = getMD5Checksum(new FileInputStream(tt));
+        }
 
-			// check if file exists
-			if (server_md5.containsKey("libs/" + ff))
-			{
-				// file corrupt
-				if (!server_md5.get("libs/" + ff).equals(digest))
-				{
-					try
-					{
-						System.out.println("Downloading libs/" + ff);
-						saveUrl(new FileOutputStream("libs/" + ff), new URL(
-								"https://github.com/arpitjindal97/aircel_git_bin/raw/master/libs/" + ff + "?raw=true"));
-					} catch (Exception e)
-					{
-						System.out.println("Problem with your Network !!!");
-						
-					}
-					// repeat once more
-					i--;
-				}
-				// file is in good condition
-				else
-				{
-					server_md5.remove("libs/" + ff);
-				}
-			} else
-			{
-				// file does not belong to us
-				System.out.println("Removed libs/" + ff);
-				(new File("libs/" + ff)).delete();
-			}
-		}
+        String classpath="libs/*:libs/";
+        if (OS.contains("Window")) {
+            server_md5.remove("libs/chromedriver_mac");
+            server_md5.remove("libs/chromedriver_linux");
+            classpath="libs/*;libs/";
+        } else if (OS.contains("Mac")) {
+            server_md5.remove("libs/chromedriver_win");
+            server_md5.remove("libs/chromedriver_linux");
+        } else {
+            server_md5.remove("libs/chromedriver_mac");
+            server_md5.remove("libs/chromedriver_win");
+        }
 
-		for (Map.Entry<String, String> entry : server_md5.entrySet())
-		{
-			System.out.println("Downloading " + entry.getKey());
-			while (true)
-			{
-				try{
-				saveUrl(new FileOutputStream(""+entry.getKey()), new URL(
-						"https://github.com/arpitjindal97/aircel_git_bin/raw/master/" + entry.getKey() + "?raw=true"));
 
-				if (getMD5Checksum(new FileInputStream(entry.getKey())).equals(entry.getValue()))
-					break;
-				}catch(Exception e)
-				{
-					System.out.println("Problem with your Network !!!");
-					
-				}
-			}
-		}
+        File f = new File("libs/");
+        f.mkdir();
+        String[] path = f.list();
+        if (path != null)
+            for (int i = 0; i < path.length; i++) {
+                String ff = path[i];
+                File tt = new File("libs/" + ff);
+                if (tt.isDirectory()) {
+                    continue;
+                }
+                String digest = getMD5Checksum(new FileInputStream(tt));
 
-		System.out.println("Done Updating files :)");
-		ProcessBuilder processBuilder = new ProcessBuilder("java", "-classpath", "libs/*;libs/", "amt");
-		processBuilder.redirectErrorStream(true);
-		Process process = processBuilder.start();
-		InputStream in = process.getInputStream();
+                // check if file exists
+                if (server_md5.containsKey("libs/" + ff)) {
+                    // file corrupt
+                    if (!server_md5.get("libs/" + ff).equals(digest)) {
+                        try {
+                            System.out.println("Downloading libs/" + ff);
+                            saveUrl(new FileOutputStream("libs/" + ff), new URL(
+                                    "https://github.com/arpitjindal97/aircel_git_bin/raw/master/libs/" + ff + "?raw=true"));
+                        } catch (Exception e) {
+                            System.out.println("Problem with your Network !!!");
 
-		byte[] buffer = new byte[1024];
-		while (true)
-		{
-			int r = in.read(buffer);
-			if (r <= 0)
-			{
-				break;
-			}
-			System.out.write(buffer, 0, r);
-		}
-	}
+                        }
+                        // repeat once more
+                        i--;
+                    }
+                    // file is in good condition
+                    else {
+                        server_md5.remove("libs/" + ff);
+                    }
+                } else {
+                    // file does not belong to us
+                    System.out.println("Removed libs/" + ff);
+                    (new File("libs/" + ff)).delete();
+                }
+            }
 
-	public static String getMD5Checksum(FileInputStream filename) throws NoSuchAlgorithmException, IOException
-	{
-		InputStream fis = filename;
+        for (Map.Entry<String, String> entry : server_md5.entrySet()) {
+            System.out.println("Downloading " + entry.getKey());
+            while (true) {
+                try {
+                    saveUrl(new FileOutputStream("" + entry.getKey()), new URL(
+                            "https://github.com/arpitjindal97/aircel_git_bin/raw/master/" + entry.getKey() + "?raw=true"));
 
-		byte[] buffer = new byte[1024];
-		MessageDigest complete = MessageDigest.getInstance("MD5");
-		int numRead;
+                    if (getMD5Checksum(new FileInputStream(entry.getKey())).equals(entry.getValue()))
+                        break;
+                } catch (Exception e) {
+                    System.out.println("Problem with your Network !!!");
 
-		do
-		{
-			numRead = fis.read(buffer);
-			if (numRead > 0)
-			{
-				complete.update(buffer, 0, numRead);
-			}
-		} while (numRead != -1);
+                }
+            }
+        }
 
-		fis.close();
-		byte[] b = complete.digest();
-		String result = "";
+        System.out.println("Done Updating files :)");
+        ProcessBuilder processBuilder = new ProcessBuilder("java", "-classpath", classpath, "amt");
+        processBuilder.redirectErrorStream(true);
+        Process process = processBuilder.start();
+        InputStream in = process.getInputStream();
 
-		for (int i = 0; i < b.length; i++)
-		{
-			result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
-		}
-		return result;
-	}
+        byte[] buffer = new byte[1024];
+        while (true) {
+            int r = in.read(buffer);
+            if (r <= 0) {
+                break;
+            }
+            System.out.write(buffer, 0, r);
+        }
+    }
 
-	public static void saveUrl(final FileOutputStream filename, final URL urlString)
-			throws MalformedURLException, IOException
-	{
-		BufferedInputStream in = null;
-		FileOutputStream fout = null;
-		try
-		{
-			in = new BufferedInputStream(urlString.openStream());
-			fout = filename;
+    public static String getMD5Checksum(FileInputStream filename) throws NoSuchAlgorithmException, IOException {
+        InputStream fis = filename;
 
-			final byte data[] = new byte[1024];
-			int count;
-			while ((count = in.read(data, 0, 1024)) != -1)
-			{
-				fout.write(data, 0, count);
-			}
-		} finally
-		{
-			if (in != null)
-			{
-				in.close();
-			}
-			if (fout != null)
-			{
-				fout.close();
-			}
-		}
-	}
+        byte[] buffer = new byte[1024];
+        MessageDigest complete = MessageDigest.getInstance("MD5");
+        int numRead;
 
-	public static String authenticate() throws Exception
-    {
+        do {
+            numRead = fis.read(buffer);
+            if (numRead > 0) {
+                complete.update(buffer, 0, numRead);
+            }
+        } while (numRead != -1);
+
+        fis.close();
+        byte[] b = complete.digest();
+        String result = "";
+
+        for (int i = 0; i < b.length; i++) {
+            result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
+        }
+        return result;
+    }
+
+    public static void saveUrl(final FileOutputStream filename, final URL urlString)
+            throws MalformedURLException, IOException {
+        BufferedInputStream in = null;
+        FileOutputStream fout = null;
+        try {
+            in = new BufferedInputStream(urlString.openStream());
+            fout = filename;
+
+            final byte data[] = new byte[1024];
+            int count;
+            while ((count = in.read(data, 0, 1024)) != -1) {
+                fout.write(data, 0, count);
+            }
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+            if (fout != null) {
+                fout.close();
+            }
+        }
+    }
+
+    public static String authenticate() throws Exception {
         InetAddress ip;
-        try
-        {
+        try {
             ip = InetAddress.getLocalHost();
             String hostname = ip.getHostName();
             Enumeration<NetworkInterface> enu = NetworkInterface.getNetworkInterfaces();
@@ -223,40 +206,32 @@ public class verify
             map.put(hostname, ip.getHostAddress());
             //System.out.println("Hostname: " + hostname);
             //System.out.println("HostAddress: " + ip.getHostAddress());
-            while (enu.hasMoreElements())
-            {
+            while (enu.hasMoreElements()) {
                 NetworkInterface network = enu.nextElement();
                 byte[] mac = network.getHardwareAddress();
-                if (mac == null)
-                {
+                if (mac == null) {
                     continue;
                 }
-                if (mac == null)
-                {
+                if (mac == null) {
                     continue;
                 }
                 StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < mac.length; i++)
-                {
+                for (int i = 0; i < mac.length; i++) {
                     sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
                 }
                 //System.out.println(network.getDisplayName() + "\t" + sb.toString());
                 map.put(network.getDisplayName(), sb.toString());
             }
             URL url;
-            try
-            {
+            try {
                 String content = null;
                 URLConnection connection = null;
-                try
-                {
+                try {
                     connection = new URL("http://ph4nt0m.ml/Arpit1.php").openConnection();
                     Scanner scanner = new Scanner(connection.getInputStream());
                     scanner.useDelimiter("\\Z");
                     content = scanner.next();
-                } 
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
 
                 }
                 //System.out.println(content);
@@ -273,19 +248,14 @@ public class verify
                 ObjectInputStream ois = new ObjectInputStream(urlCon.getInputStream());
                 String reply = (String) ois.readObject();
                 ois.close();
-                if (!reply.equals("OK"))
-                {
+                if (!reply.equals("OK")) {
                     System.out.println(reply);
                 }
                 return reply;
-            } 
-            catch (Exception e)
-            {
+            } catch (Exception e) {
 
             }
-        } 
-        catch (Exception ee)
-        {
+        } catch (Exception ee) {
         }
         System.out.println("Problem occured while connecting to server");
         return "Problem occured while connecting to server";

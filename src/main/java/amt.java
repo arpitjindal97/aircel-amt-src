@@ -103,8 +103,17 @@ public class amt
             System.out.println("Invalid Format");
             return;
         }
-        
-        System.setProperty("webdriver.chrome.driver", "libs/chromedriver");
+
+        String OS = System.getProperty("os.name");
+        String driver_path="";
+        if (OS.contains("Window")) {
+            driver_path = "libs/chromedriver_win";
+        } else if (OS.contains("Mac")) {
+            driver_path = "libs/chromedriver_mac";
+        } else {
+            driver_path = "libs/chromedriver_linux";
+        }
+        System.setProperty("webdriver.chrome.driver", driver_path);
         
         ChromeDriver driver = new ChromeDriver();
         WebDriverWait wait = new WebDriverWait(driver, 60);
