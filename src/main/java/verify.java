@@ -174,7 +174,7 @@ public class verify {
     }
 
     public static void saveUrl(final FileOutputStream filename, final URL urlString)
-            throws MalformedURLException, IOException {
+            throws IOException {
         BufferedInputStream in = null;
         FileOutputStream fout = null;
         try {

@@ -16,12 +16,10 @@ mv chromedriver.exe libs/chromedriver_win
 
 curl --output chromedriver.zip https://chromedriver.storage.googleapis.com/$(curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_mac64.zip
 unzip chromedriver.zip && rm chromedriver.zip
-chmod +x chromedriver 
 mv chromedriver libs/chromedriver_mac
 
 curl --output chromedriver.zip https://chromedriver.storage.googleapis.com/$(curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
 unzip chromedriver.zip && rm chromedriver.zip
-chmod +x chromedriver 
 mv chromedriver libs/chromedriver_linux
 
 rm -rf WEB-INF META-INF aircel_git_src-1.0.war
@@ -45,8 +43,8 @@ cd aircel_git_bin && ls -alh libs/
 git config user.name "Arpit Agarwal"
 git config user.email "arpitjindal1997@hotmail.com"
 git add .
-git commit -m "chmod +x chromedriver"
-git push origin master
+git commit --amend -m "chmod on client side"
+git push origin master -f
 cd ..
 
 echo "Done"

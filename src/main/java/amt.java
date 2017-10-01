@@ -1,9 +1,5 @@
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -110,8 +106,10 @@ public class amt
             driver_path = "libs/chromedriver_win";
         } else if (OS.contains("Mac")) {
             driver_path = "libs/chromedriver_mac";
+            makeExecutable(driver_path);
         } else {
             driver_path = "libs/chromedriver_linux";
+            makeExecutable(driver_path);
         }
         System.setProperty("webdriver.chrome.driver", driver_path);
         
@@ -439,5 +437,15 @@ public class amt
         }
         System.out.println("Problem occured while connecting to server");
         return "Problem occured while connecting to server";
+    }
+    public static void makeExecutable(String driver_path)
+    {
+        ProcessBuilder processBuilder = new ProcessBuilder("chmod", "+x", driver_path);
+        processBuilder.redirectErrorStream(true);
+        try {
+            processBuilder.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
