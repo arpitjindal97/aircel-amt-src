@@ -23,10 +23,10 @@ jar cfm Start.jar manifest.txt MyTerminal*.class
 rm MyTerminal*.class manifest.txt
 
 cd ..
-git clone https://github.com/arpitjindal97/aircel_git_bin.git
+git clone git@github.com:arpitjindal97/aircel_git_bin.git
 
 rm -rf aircel_git_bin/*
-cp -rf deployments* aircel_git_bin/
+cp -rf deployments/* aircel_git_bin/
 
 echo "Pushing to aircel_git_bin"
 cd aircel_git_bin
