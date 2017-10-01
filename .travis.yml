@@ -2,7 +2,9 @@ language: java
 before_script:
   - env | sort
   - wget --user="$BITBUCKET_EMAIL" --password="$BITBUCKET_PASS" -i urls.txt
+  - ls -alh
   - eval "$(ssh-agent)"
+  - chmod 600 git-ssh.key
   - ssh-add git-ssh.key
 script:
   - mvn clean package
