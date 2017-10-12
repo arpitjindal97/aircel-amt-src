@@ -37,9 +37,9 @@ public class verify {
 
     public static void main(String[] args) throws Exception {
         String OS = System.getProperty("os.name");
-        if (!authenticate().equals("OK")) {
-            return;
-        }
+        //if (!authenticate().equals("OK")) {
+        //    return;
+        //}
 
         Map<String, String> server_md5 = new LinkedHashMap();
         try {
