@@ -43,7 +43,7 @@ cd aircel_git_bin && ls -alh libs/
 git config user.name "Arpit Agarwal"
 git config user.email "arpitjindal1997@hotmail.com"
 git add .
-git commit --amend -m "chmod on client side"
+git commit -m "disabling authentication for a while"
 git push origin master -f
 cd ..
 

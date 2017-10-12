@@ -35,9 +35,9 @@ public class amt
 
     public static void main(String arg[]) throws Exception
     {
-        if (!authenticate().equals("OK"))
+        //if (!authenticate().equals("OK"))
         {
-            return;
+        //    return;
         }
         int count = 0;
         String user, pass, temp = "";
