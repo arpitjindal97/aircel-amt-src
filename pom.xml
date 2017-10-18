@@ -15,16 +15,9 @@
         <maven.clean.plugin>3.0.0</maven.clean.plugin>
         <apache.poi-ooxml>3.17</apache.poi-ooxml>
         <maven.war.plugin>3.1.0</maven.war.plugin>
-        <fasterxml.version>2.9.2</fasterxml.version>
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${fasterxml.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.poi</groupId>

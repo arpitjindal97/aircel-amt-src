@@ -32,18 +32,18 @@ jar cfm Start.jar manifest.txt MyTerminal*.class
 rm MyTerminal*.class manifest.txt
 
 cd ..
-git clone git@github.com:arpitjindal97/aircel_git_bin.git
+git clone git@github.com:arpitjindal97/aircel-amt-bin.git
 
-rm -rf aircel_git_bin/*
-cp -rf deployments/* aircel_git_bin/
+rm -rf aircel-amt-bin/*
+cp -rf deployments/* aircel-amt-bin/
 rm -rf deployments
 
-echo "Pushing to aircel_git_bin"
-cd aircel_git_bin && ls -alh libs/
+echo "Pushing to aircel-amt-bin"
+cd aircel-amt-bin && ls -alh libs/
 git config user.name "Arpit Agarwal"
 git config user.email "arpitjindal1997@hotmail.com"
 git add .
-git commit -m "authentication restored"
+git commit -m "subclass will be downloaded on start"
 git push origin master
 cd ..
 

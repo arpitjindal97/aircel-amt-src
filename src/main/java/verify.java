@@ -260,21 +260,27 @@ public class verify {
         System.out.println("Problem occured while connecting to server");
         return "Problem occured while connecting to server";
     }
-    private static void trustEveryone() {
+    static void trustEveryone() {
         try {
-            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier(){
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }});
+            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
+
             SSLContext context = SSLContext.getInstance("TLS");
-            context.init(null, new X509TrustManager[]{new X509TrustManager(){
-                public void checkClientTrusted(X509Certificate[] chain,
-                                               String authType) throws CertificateException {}
-                public void checkServerTrusted(X509Certificate[] chain,
-                                               String authType) throws CertificateException {}
-                public X509Certificate[] getAcceptedIssuers() {
+            X509TrustManager manager = new X509TrustManager()
+            {
+                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException
+                {}
+                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException
+                {}
+                public X509Certificate[] getAcceptedIssuers()
+                {
                     return new X509Certificate[0];
-                }}}, new SecureRandom());
+                }
+            };
+            X509TrustManager []manager1 = new X509TrustManager[]{
+                    manager
+            };
+
+            context.init(null,manager1 , new SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(
                     context.getSocketFactory());
         } catch (Exception e) { // should never happen

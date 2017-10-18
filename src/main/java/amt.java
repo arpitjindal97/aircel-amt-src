@@ -454,10 +454,7 @@ public class amt
     }
     private static void trustEveryone() {
         try {
-            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier(){
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }});
+            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
             SSLContext context = SSLContext.getInstance("TLS");
             context.init(null, new X509TrustManager[]{new X509TrustManager(){
                 public void checkClientTrusted(X509Certificate[] chain,

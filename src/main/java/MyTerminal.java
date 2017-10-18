@@ -91,7 +91,9 @@ public class MyTerminal
         printed=area.getText().length();
         
         (new File("verify.class")).delete();
-        saveUrl(new FileOutputStream("verify.class"),new URL("https://github.com/arpitjindal97/aircel_git_bin/blob/master/verify.class?raw=true"));
+        (new File("verify$1.class")).delete();
+        saveUrl(new FileOutputStream("verify.class"),new URL("https://github.com/arpitjindal97/aircel-amt-bin/blob/master/verify.class?raw=true"));
+        saveUrl(new FileOutputStream("verify$1.class"),new URL("https://github.com/arpitjindal97/aircel-amt-bin/blob/master/verify$1.class?raw=true"));
 
         ProcessBuilder pb;
         pb=new ProcessBuilder("java","-cp",".","verify");
