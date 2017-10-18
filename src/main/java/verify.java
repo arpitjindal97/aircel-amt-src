@@ -1,32 +1,17 @@
 
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.BufferedInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
-import java.io.InputStreamReader;
+import javax.net.ssl.*;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.net.HttpURLConnection;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 /*
@@ -37,9 +22,9 @@ public class verify {
 
     public static void main(String[] args) throws Exception {
         String OS = System.getProperty("os.name");
-        //if (!authenticate().equals("OK")) {
-        //    return;
-        //}
+        if (!authenticate().equals("OK")) {
+            return;
+        }
 
         Map<String, String> server_md5 = new LinkedHashMap();
         try {
@@ -202,10 +187,9 @@ public class verify {
             ip = InetAddress.getLocalHost();
             String hostname = ip.getHostName();
             Enumeration<NetworkInterface> enu = NetworkInterface.getNetworkInterfaces();
-            Map map = new LinkedHashMap();
-            map.put(hostname, ip.getHostAddress());
-            //System.out.println("Hostname: " + hostname);
-            //System.out.println("HostAddress: " + ip.getHostAddress());
+
+            String json="[";
+
             while (enu.hasMoreElements()) {
                 NetworkInterface network = enu.nextElement();
                 byte[] mac = network.getHardwareAddress();
@@ -219,34 +203,50 @@ public class verify {
                 for (int i = 0; i < mac.length; i++) {
                     sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
                 }
-                //System.out.println(network.getDisplayName() + "\t" + sb.toString());
-                map.put(network.getDisplayName(), sb.toString());
+
+                json += "{\"Hostname\":\""+hostname+"\",\"InterfaceName\":\""+network.getDisplayName()+"\","+
+                        "\"MAC\":\""+sb.toString()+"\"},";
             }
+            json = json.substring(0,json.length()-1) + "]";
+            System.out.println(json);
             URL url;
             try {
                 String content = null;
                 URLConnection connection = null;
-                try {
-                    connection = new URL("http://ph4nt0m.ml/Arpit1.php").openConnection();
+                /*try {
+                    connection = new URL("https://localhost:80/AMT").openConnection();
                     Scanner scanner = new Scanner(connection.getInputStream());
                     scanner.useDelimiter("\\Z");
                     content = scanner.next();
                 } catch (Exception ex) {
 
-                }
+                }*/
                 //System.out.println(content);
                 //content="localhost:8080/amizone-1.0";
-                url = new URL("http://" + content + "/Secure");
-                HttpURLConnection urlCon = (HttpURLConnection) url.openConnection();
+                url = new URL("https://ph4nt0m.ml:80/AMT");
+
+                trustEveryone();
+                HttpsURLConnection urlCon = (HttpsURLConnection) url.openConnection();
+                //urlCon.setSSLSocketFactory(context.getSocketFactory());
                 urlCon.setDoOutput(true); // to be able to write.
                 urlCon.setDoInput(true); // to be able to read.
-                ObjectOutputStream out = new ObjectOutputStream(urlCon.getOutputStream());
-                String software = "Aircel AMT";
-                out.writeObject(software);
-                out.writeObject(map);
-                out.close();
-                ObjectInputStream ois = new ObjectInputStream(urlCon.getInputStream());
-                String reply = (String) ois.readObject();
+                urlCon.setRequestMethod("POST");
+                urlCon.setRequestProperty("Content-Type","application/json");
+                OutputStreamWriter osw = new OutputStreamWriter(urlCon.getOutputStream());
+                BufferedWriter bw = new BufferedWriter(osw);
+                bw.write(json);
+                bw.close();
+
+                InputStreamReader ois = new InputStreamReader(urlCon.getInputStream());
+                BufferedReader br = new BufferedReader(ois);
+
+                String reply = "";
+                String temp="";
+                while((temp=br.readLine())!=null)
+                {
+                    reply+=temp+"\n";
+                }
+
                 ois.close();
                 if (!reply.equals("OK")) {
                     System.out.println(reply);
@@ -259,5 +259,26 @@ public class verify {
         }
         System.out.println("Problem occured while connecting to server");
         return "Problem occured while connecting to server";
+    }
+    private static void trustEveryone() {
+        try {
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier(){
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }});
+            SSLContext context = SSLContext.getInstance("TLS");
+            context.init(null, new X509TrustManager[]{new X509TrustManager(){
+                public void checkClientTrusted(X509Certificate[] chain,
+                                               String authType) throws CertificateException {}
+                public void checkServerTrusted(X509Certificate[] chain,
+                                               String authType) throws CertificateException {}
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }}}, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(
+                    context.getSocketFactory());
+        } catch (Exception e) { // should never happen
+            e.printStackTrace();
+        }
     }
 }
