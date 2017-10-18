@@ -2,11 +2,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Font;
@@ -17,13 +13,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.text.*;
 import java.net.URLConnection;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Scanner;
 
 public class MyTerminal
 {
@@ -89,11 +82,19 @@ public class MyTerminal
         String msg="Fetching latest file ....\n";
         area.append(msg);
         printed=area.getText().length();
-        
-        (new File("verify.class")).delete();
-        (new File("verify$1.class")).delete();
-        saveUrl(new FileOutputStream("verify.class"),new URL("https://github.com/arpitjindal97/aircel-amt-bin/blob/master/verify.class?raw=true"));
-        saveUrl(new FileOutputStream("verify$1.class"),new URL("https://github.com/arpitjindal97/aircel-amt-bin/blob/master/verify$1.class?raw=true"));
+
+        URLConnection connection = new URL(
+                "https://github.com/arpitjindal97/aircel-amt-bin/blob/master/download.txt?raw=true").openConnection();
+        Scanner scanner = new Scanner(connection.getInputStream());
+        scanner.useDelimiter("\\Z");
+        String content = scanner.next();
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content.getBytes())));
+        while ((content = br.readLine()) != null) {
+
+            (new File(content)).delete();
+            saveUrl(new FileOutputStream(content), new URL("https://github.com/arpitjindal97/aircel-amt-bin/blob/master/"+content+"?raw=true"));
+        }
 
         ProcessBuilder pb;
         pb=new ProcessBuilder("java","-cp",".","verify");

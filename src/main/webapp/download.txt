@@ -1,0 +1,2 @@
+verify.class
+verify$1.class

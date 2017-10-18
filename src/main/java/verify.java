@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.security.SecureRandom;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
@@ -30,7 +31,7 @@ public class verify {
         try {
             System.out.println("Checking for updates...");
             URLConnection connection = new URL(
-                    "https://github.com/arpitjindal97/aircel_git_bin/blob/master/md5.md?raw=true").openConnection();
+                    "https://github.com/arpitjindal97/aircel-amt-bin/blob/master/md5.md?raw=true").openConnection();
             Scanner scanner = new Scanner(connection.getInputStream());
             scanner.useDelimiter("\\Z");
             String content = scanner.next();
@@ -208,7 +209,7 @@ public class verify {
                         "\"MAC\":\""+sb.toString()+"\"},";
             }
             json = json.substring(0,json.length()-1) + "]";
-            System.out.println(json);
+            //System.out.println(json);
             URL url;
             try {
                 String content = null;
@@ -227,7 +228,7 @@ public class verify {
 
                 trustEveryone();
                 HttpsURLConnection urlCon = (HttpsURLConnection) url.openConnection();
-                //urlCon.setSSLSocketFactory(context.getSocketFactory());
+
                 urlCon.setDoOutput(true); // to be able to write.
                 urlCon.setDoInput(true); // to be able to read.
                 urlCon.setRequestMethod("POST");
@@ -244,7 +245,7 @@ public class verify {
                 String temp="";
                 while((temp=br.readLine())!=null)
                 {
-                    reply+=temp+"\n";
+                    reply+=temp+"";
                 }
 
                 ois.close();
@@ -253,7 +254,7 @@ public class verify {
                 }
                 return reply;
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         } catch (Exception ee) {
         }
@@ -265,6 +266,7 @@ public class verify {
             HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
 
             SSLContext context = SSLContext.getInstance("TLS");
+
             X509TrustManager manager = new X509TrustManager()
             {
                 public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException
@@ -287,4 +289,5 @@ public class verify {
             e.printStackTrace();
         }
     }
+
 }

@@ -5,7 +5,7 @@ echo "Unzipping War..."
 unzip aircel_git_src-1.0.war > /dev/null
 mv WEB-INF/classes/* .
 mkdir libs
-mv amt.class status.class libs/
+mv amt*.class status*.class libs/
 mv WEB-INF/lib/* libs/
 
 echo "Fetching Chromedriver ..."
@@ -43,7 +43,7 @@ cd aircel-amt-bin && ls -alh libs/
 git config user.name "Arpit Agarwal"
 git config user.email "arpitjindal1997@hotmail.com"
 git add .
-git commit -m "subclass will be downloaded on start"
+git commit -m "major changes made in MyTerminal"
 git push origin master
 cd ..
 
