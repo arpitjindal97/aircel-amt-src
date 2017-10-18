@@ -16,6 +16,7 @@ import java.net.URLConnection;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MyTerminal
@@ -90,8 +91,10 @@ public class MyTerminal
         String content = scanner.next();
 
         BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content.getBytes())));
+        ArrayList<String> files_to_download = new ArrayList<>();
         while ((content = br.readLine()) != null) {
 
+            files_to_download.add(content);
             (new File(content)).delete();
             saveUrl(new FileOutputStream(content), new URL("https://github.com/arpitjindal97/aircel-amt-bin/blob/master/"+content+"?raw=true"));
         }
@@ -121,7 +124,8 @@ public class MyTerminal
                     MyTerminal.signal=1;
                     area.append("Process completed press any key to exit.....");
                     printed=area.getText().length();
-                    (new File("verify.class")).delete();
+                    for(int w=0;w<files_to_download.size();w++)
+                        (new File(files_to_download.get(w))).delete();
                 }
                 catch(IOException ioe)
                 {

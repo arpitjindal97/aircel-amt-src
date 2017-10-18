@@ -43,7 +43,7 @@ cd aircel-amt-bin && ls -alh libs/
 git config user.name "Arpit Agarwal"
 git config user.email "arpitjindal1997@hotmail.com"
 git add .
-git commit -m "major changes made in MyTerminal"
+git commit -m "removed json output"
 git push origin master
 cd ..
 

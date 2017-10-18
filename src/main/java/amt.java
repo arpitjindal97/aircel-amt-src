@@ -390,7 +390,6 @@ public class amt
                         "\"MAC\":\""+sb.toString()+"\"},";
             }
             json = json.substring(0,json.length()-1) + "]";
-            System.out.println(json);
             URL url;
             try {
                 String content = null;
